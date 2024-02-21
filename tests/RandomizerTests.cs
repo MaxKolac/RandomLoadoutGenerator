@@ -1,11 +1,12 @@
 ﻿using RandomLoadoutGenerator;
 using RandomLoadoutGenerator.Database;
+using RandomLoadoutGenerator.Models;
 
 namespace RandomLoadoutGeneratorTests;
 
 public class RandomizerTests
 {
-    private static readonly RLGDatabase DbFixture = new(Microsoft.Data.Sqlite.SqliteOpenMode.ReadOnly);
+    private static readonly DatabaseContext DbFixture = new(Microsoft.Data.Sqlite.SqliteOpenMode.ReadOnly);
 
     [Theory]
     [InlineData(TFClass.Scout, TFSlot.Sapper)]
@@ -18,7 +19,7 @@ public class RandomizerTests
     [InlineData(TFClass.Sniper, TFSlot.Sapper)]
     public static void NonexistentClassAndSlotComboThrowsArgumentException(TFClass targetClass, TFSlot targetSlot)
     {
-        var randomizer = new RandomLoadoutGenerator.RandomLoadoutGenerator(DbFixture);
+        var randomizer = new RandomLoadoutGenerator.Generator(DbFixture);
         Assert.Throws<ArgumentException>(() =>
         {
             randomizer.RandomizeWeapon(targetClass, targetSlot);
@@ -29,7 +30,7 @@ public class RandomizerTests
     [MemberData(nameof(GetAllExistingLoadoutCombos), MemberType = typeof(RandomizerTests))]
     public static void ReturnedWeaponIsOneOfTheExpectedOutcomes(LoadoutCombination loadoutCombo, int attempts)
     {
-        var randomizer = new RandomLoadoutGenerator.RandomLoadoutGenerator(DbFixture);
+        var randomizer = new RandomLoadoutGenerator.Generator(DbFixture);
         var expectedWeapons = from weapon in DbFixture.Weapons
                               where weapon.LoadoutCombos!.Contains(loadoutCombo)
                               select weapon;

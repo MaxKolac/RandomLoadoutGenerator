@@ -1,37 +1,44 @@
 ﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using RandomLoadoutGenerator.Models;
 
 namespace RandomLoadoutGenerator.Database;
 
-public class RLGDatabase : DbContext
+///<inheritdoc />
+public class DatabaseContext : DbContext
 {
     private readonly SqliteOpenMode _connectionMode;
 
+    ///<inheritdoc cref="DbSet{TEntity}"/>
     public virtual DbSet<ReskinGroup> ReskinGroups { get; set; }
+    ///<inheritdoc cref="DbSet{TEntity}"/>
     public virtual DbSet<LoadoutCombination> LoadoutCombinations { get; set; }
+    ///<inheritdoc cref="DbSet{TEntity}"/>
     public virtual DbSet<Weapon> Weapons { get; set; }
 
     /// <summary>
-    /// Creates a new instance.
+    /// Creates a new instance. See <see cref="DbContext()"/> for more info.
     /// </summary>
     /// <param name="connectionMode">Determines the connection type. See <see cref="SqliteOpenMode"/> enum for more info.</param>
-    public RLGDatabase(SqliteOpenMode connectionMode = SqliteOpenMode.ReadWriteCreate) : base()
+    public DatabaseContext(SqliteOpenMode connectionMode = SqliteOpenMode.ReadWriteCreate) : base()
     {
         _connectionMode = connectionMode;
     }
 
-    /// <inheritdoc cref="RLGDatabase(SqliteOpenMode)"/>
+    /// <inheritdoc cref="DatabaseContext(SqliteOpenMode)"/>
     /// <param name="optionsBuilder">Allows for additional configuration of the instance through an option builder.</param>
-    public RLGDatabase(DbContextOptionsBuilder optionsBuilder, SqliteOpenMode connectionMode = SqliteOpenMode.ReadWriteCreate) : base(optionsBuilder.Options)
+    /// <param name="connectionMode">Determines the connection type. See <see cref="SqliteOpenMode"/> enum for more info.</param>
+    public DatabaseContext(DbContextOptionsBuilder optionsBuilder, SqliteOpenMode connectionMode = SqliteOpenMode.ReadWriteCreate) : base(optionsBuilder.Options)
     {
         _connectionMode = connectionMode;
     }
 
+    ///<inheritdoc/>
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         SqliteConnectionStringBuilder builder = new()
         {
-            DataSource = @"Database\\tf_weapons.sqlite3",
+            DataSource = DatabaseFile.FullPath,
             Mode = _connectionMode,
             ForeignKeys = true
         };
@@ -45,7 +52,7 @@ public class RLGDatabase : DbContext
     /// </summary>
     public static void Purge()
     {
-        using var context = new RLGDatabase();
+        using var context = new DatabaseContext();
         context.Database.EnsureDeleted();
         context.Database.Migrate();
         context.SaveChanges();
