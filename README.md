@@ -1,6 +1,6 @@
 ﻿## Overview
 
-A C# library that allows you to randomly choose one weapon of all weapons available in Team Fortress 2.
+A C# library that allows you to choose random weapons from all weapons available in Team Fortress 2.
 You can specify for what class and for what slot should a weapon be randomized.
 
 This library supports weapons that are multi-class and are equippable in different slots, for example The Panic Attack or The B.A.S.E. Jumper.
@@ -49,4 +49,4 @@ You can also enable `Generator` to treat weapon reskins as a single weapon and h
 var weapon = generator.RandomizeWeapon(TFClass.Scout, TFSlot.Melee, true);
 ```
 
-You can also take a look at `examples` folder for an example project. It's a simple console app that generates a new random loadout for a random class everytime you press Enter.
+You can also take a look at `examples` folder on the GitHub repository for an example project. It's a simple console app that generates a new random loadout for a random class everytime you press Enter.
