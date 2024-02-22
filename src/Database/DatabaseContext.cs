@@ -46,11 +46,10 @@ public class DatabaseContext : DbContext
     }
 
     /// <summary>
-    /// Purges all the records and repopulates all tables with up-to-date items, classes and slots.<br/>
-    /// <b>Calling this method will erase the previous database!</b><br/>
-    /// Avoid calling this method from the code. Use it only when a fresh database copy is required.
+    /// Deletes, creates an empty database and repopulates it with up-to-date items, classes and slots.<br/>
+    /// <b>Calling this method will erase the previous database!</b> 
     /// </summary>
-    public static void Purge()
+    internal static void Purge()
     {
         using var context = new DatabaseContext();
         context.Database.EnsureDeleted();

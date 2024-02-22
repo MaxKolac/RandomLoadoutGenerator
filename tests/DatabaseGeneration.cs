@@ -9,7 +9,7 @@ namespace RandomLoadoutGeneratorTests
         //[Fact]
         public static void GenerateDatabaseAndPopulateIt()
         {
-            DatabaseContext.Purge();
+            //DatabaseContext.Purge();
         }
     }
 }
