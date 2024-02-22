@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RandomLoadoutGenerator", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RandomLoadoutGeneratorTests", "tests\RandomLoadoutGeneratorTests.csproj", "{342009D4-101F-4560-BA93-7E49D2D4DE61}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleProject", "examples\ExampleProject.csproj", "{A50FC6F5-2D5B-4B27-A0E4-BEAA3B036288}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementy rozwiązania", "Elementy rozwiązania", "{E1CE1813-921B-446E-A404-BE9234A51303}"
 	ProjectSection(SolutionItems) = preProject
 		LICENSE = LICENSE
@@ -29,10 +27,6 @@ Global
 		{342009D4-101F-4560-BA93-7E49D2D4DE61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{342009D4-101F-4560-BA93-7E49D2D4DE61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{342009D4-101F-4560-BA93-7E49D2D4DE61}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A50FC6F5-2D5B-4B27-A0E4-BEAA3B036288}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A50FC6F5-2D5B-4B27-A0E4-BEAA3B036288}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A50FC6F5-2D5B-4B27-A0E4-BEAA3B036288}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A50FC6F5-2D5B-4B27-A0E4-BEAA3B036288}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
