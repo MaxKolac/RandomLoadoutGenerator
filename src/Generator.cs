@@ -16,7 +16,6 @@ public sealed class Generator
 
     /// <summary>
     /// Creates a new <see cref="Generator"/> instance and attempts to populate its fields with records from the bundled SQLite database.<br/>
-    /// Make sure to call <see cref="DatabaseFile.Unpack"/> at least once before creating any <see cref="Generator"/> instances.
     /// </summary>
     public Generator()
     {
