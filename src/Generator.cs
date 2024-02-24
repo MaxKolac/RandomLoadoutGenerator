@@ -9,8 +9,6 @@ namespace RandomLoadoutGenerator;
 /// </summary>
 public sealed class Generator
 {
-    //TODO
-    //readonly List<ReskinGroup> _reskinGroups;
     readonly List<LoadoutCombination> _loadoutCombinations;
     readonly List<Weapon> _weapons;
 
@@ -38,6 +36,8 @@ public sealed class Generator
     /// <param name="database">DI of <see cref="DatabaseContext"/>. Instance will query all tables from this context.</param>
     public Generator(DatabaseContext database)
     {
+        //Despite this constructor not technically using the DB file
+        //unit-testing requires that it is there
         if (!DatabaseFile.Exists())
             DatabaseFile.Unpack();
 
@@ -60,17 +60,20 @@ public sealed class Generator
     /// <exception cref="ArgumentException"></exception>
     public Weapon RandomizeWeapon(TFClass targetClass, TFSlot targetSlot, bool treatReskinsAsOne = false)
     {
+        if (targetClass != TFClass.Spy && targetSlot == TFSlot.Sapper)
+            throw new ArgumentException($"{targetClass} and {targetSlot} is not a valid combination.");
+
         //Get the exact needed TFLoadoutCombo instance because comparing objects in C# can be wonky
         var targetLoadoutCombo = (
             from loadout in _loadoutCombinations
             where loadout.Class == targetClass && loadout.Slot == targetSlot
             select loadout
-        ).FirstOrDefault() ?? throw new ArgumentException($"{targetClass}, {targetSlot}");
+        ).First();
 
         //Get weapons valid for the requested loadout slot & class
         var validWeapons =
             from weapon in _weapons
-            where weapon.LoadoutCombos!.Contains(targetLoadoutCombo)
+            where weapon.LoadoutCombos!.Contains(targetLoadoutCombo) && weapon.IsEnabled
             select weapon;
 
         //With this option enabled, weapons are grouped by their ReskinGroup.
@@ -100,6 +103,155 @@ public sealed class Generator
         }
 
         return validWeapons.ToArray()[Random.Shared.Next(validWeapons.Count())];
+    }
+
+    /// <summary>
+    /// Enables the specified weapons to be in the pool of possible outcomes for this instance.
+    /// <para>
+    /// If no weapon is found with the specified ID, <see cref="ArgumentException"/> will be thrown.
+    /// Take a look at the bottom of the <c>README.md</c> to see weapon IDs.
+    /// Attempting to enable an already enabled weapon does nothing.
+    /// </para>
+    /// <para>
+    /// All weapons are enabled by default. Keep in mind that disabled weapons will be disabled only for that instance. A new <see cref="Generator"/> instance will have all weapons re-enabled.
+    /// </para>
+    /// </summary>
+    /// <param name="weaponIds">An array of ID's of weapons to enable.</param>
+    /// <exception cref="ArgumentException"/>
+    public void EnableWeapons(params int[] weaponIds)
+    {
+        foreach (var id in weaponIds)
+        {
+            var weapon = _weapons.Find(w => w.ID == id) ?? throw new ArgumentException($"No weapon with ID: {id} was found.");
+            weapon.IsEnabled = true;
+        }
+    }
+
+    public IEnumerable<Weapon> GetEnabledWeapons()
+    {
+        return from weapon in _weapons
+               where weapon.IsEnabled
+               select weapon;
+    }
+
+    public IEnumerable<Weapon> GetEnabledWeapons(TFClass targetClass)
+    {
+        var weaponLists = from loadoutCombo in _loadoutCombinations
+                           where loadoutCombo.Class == targetClass
+                           select loadoutCombo.Weapons;
+
+        var result = new List<Weapon>();
+        foreach(var weaponList in weaponLists)
+        {
+            result.AddRange(weaponList.Where(weapon => weapon.IsEnabled));
+        }
+        return result;
+    }
+
+    public IEnumerable<Weapon> GetEnabledWeapons(TFSlot targetSlot)
+    {
+        var weaponLists = from loadoutCombo in _loadoutCombinations
+                          where loadoutCombo.Slot == targetSlot
+                          select loadoutCombo.Weapons;
+
+        var result = new List<Weapon>();
+        foreach (var weaponList in weaponLists)
+        {
+            result.AddRange(weaponList.Where(weapon => weapon.IsEnabled));
+        }
+        return result;
+    }
+
+    public IEnumerable<Weapon> GetEnabledWeapons(TFClass targetClass, TFSlot targetSlot)
+    {
+        if (targetClass != TFClass.Spy && targetSlot == TFSlot.Sapper)
+            throw new ArgumentException($"{targetClass} and {targetSlot} is not a valid combination.");
+
+        var weaponLists = from loadoutCombo in _loadoutCombinations
+                          where loadoutCombo.Class == targetClass && loadoutCombo.Slot == targetSlot
+                          select loadoutCombo.Weapons;
+
+        var result = new List<Weapon>();
+        foreach (var weaponList in weaponLists)
+        {
+            result.AddRange(weaponList.Where(weapon => weapon.IsEnabled));
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Disables the specified weapons and pulls them out of the pool of possible outcomes.
+    /// Makes it impossible to pull the specified weapons, until they're re-enabled.
+    /// <para>
+    /// If no weapon is found with the specified ID, <see cref="ArgumentException"/> will be thrown.
+    /// Take a look at the bottom of the <c>README.md</c> to see weapon IDs.
+    /// <b>TODO: Disabling last possible weapon - what should happen???</b>
+    /// </para>
+    /// <para>
+    /// All weapons are enabled by default. Keep in mind that disabled weapons will be disabled only for that instance. A new <see cref="Generator"/> instance will have all weapons re-enabled.
+    /// </para>
+    /// </summary>
+    /// <param name="weaponIds">An array of ID's of weapons to disable.</param>
+    /// <exception cref="ArgumentException"/>
+    public void DisableWeapons(params int[] weaponIds)
+    {
+        foreach (var id in weaponIds)
+        {
+            var weapon = _weapons.Find(w => w.ID == id) ?? throw new ArgumentException($"No weapon with ID: {id} was found.");
+            weapon.IsEnabled = false;
+        }
+    }
+
+    public IEnumerable<Weapon> GetDisabledWeapons()
+    {
+        return from weapon in _weapons
+               where !weapon.IsEnabled
+               select weapon;
+    }
+
+    public IEnumerable<Weapon> GetDisabledWeapons(TFClass targetClass)
+    {
+        var weaponLists = from loadoutCombo in _loadoutCombinations
+                          where loadoutCombo.Class == targetClass
+                          select loadoutCombo.Weapons;
+
+        var result = new List<Weapon>();
+        foreach (var weaponList in weaponLists)
+        {
+            result.AddRange(weaponList.Where(weapon => !weapon.IsEnabled));
+        }
+        return result;
+    }
+
+    public IEnumerable<Weapon> GetDisabledWeapons(TFSlot targetSlot)
+    {
+        var weaponLists = from loadoutCombo in _loadoutCombinations
+                          where loadoutCombo.Slot == targetSlot
+                          select loadoutCombo.Weapons;
+
+        var result = new List<Weapon>();
+        foreach (var weaponList in weaponLists)
+        {
+            result.AddRange(weaponList.Where(weapon => !weapon.IsEnabled));
+        }
+        return result;
+    }
+
+    public IEnumerable<Weapon> GetDisabledWeapons(TFClass targetClass, TFSlot targetSlot)
+    {
+        if (targetClass != TFClass.Spy && targetSlot == TFSlot.Sapper)
+            throw new ArgumentException($"{targetClass} and {targetSlot} is not a valid combination.");
+
+        var weaponLists = from loadoutCombo in _loadoutCombinations
+                          where loadoutCombo.Class == targetClass && loadoutCombo.Slot == targetSlot
+                          select loadoutCombo.Weapons;
+
+        var result = new List<Weapon>();
+        foreach (var weaponList in weaponLists)
+        {
+            result.AddRange(weaponList.Where(weapon => !weapon.IsEnabled));
+        }
+        return result;
     }
 
     /// <summary>

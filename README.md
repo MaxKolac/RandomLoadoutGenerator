@@ -8,6 +8,8 @@ This library supports weapons that are multi-class and are equippable in differe
 It's also possible to tell the `Generator` to treat weapon reskins as a single weapon to increase the odds of rolling mechanically different unlockable weapons.
 This way you can minimize the odds of pulling different melee reskins 5 times in a row.
 
+You can also just remove weapons from being a possible outcome.
+
 ## Boring details
 
 It uses a small built-in SQLite packaged as an embedded resource. 
@@ -49,6 +51,16 @@ You can enable `Generator` to treat weapon reskins as a single weapon and have h
 
 ```
 var weapon = generator.RandomizeWeapon(TFClass.Scout, TFSlot.Melee, true);
+```
+
+You can disable and enable weapons to completely disallow them from being a possible outcome. 
+You can choose the weapon to enable/disable by passing its ID. You can either look into the database itself or reference the ID table at the bottom of this README.
+
+All weapons are enabled by default. Keep in mind that disabled weapons will be disabled only for that instance. A new `Generator` instance will have all weapons re-enabled.
+
+```
+generator.EnableWeapon(0, 3);
+generator.DisableWeapon(1, 2, 3, 4);
 ```
 
 You can also take a look at `examples` folder on the GitHub repository for an example project. It's a simple console app that generates a new random loadout for a random class everytime you press Enter.
