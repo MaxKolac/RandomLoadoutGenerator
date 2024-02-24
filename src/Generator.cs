@@ -5,7 +5,7 @@ using RandomLoadoutGenerator.Models;
 namespace RandomLoadoutGenerator;
 
 /// <summary>
-/// A class with methods meant for randomizing Team Fortress 2 classes and weapons.
+/// A class with methods meant for randomizing Team Fortress 2 classes. weapons and slots.
 /// </summary>
 public sealed class Generator
 {
@@ -22,12 +22,20 @@ public sealed class Generator
 
         using var database = new DatabaseContext();
         //_reskinGroups = database.ReskinGroups.ToList();
+#if NET8_0
+        _loadoutCombinations = [.. database.LoadoutCombinations];
+        _weapons = [.. database.Weapons
+                       .Include(w => w.ReskinGroup)
+                       .Include(w => w.LoadoutCombos)
+                       .AsSplitQuery()];
+#else
         _loadoutCombinations = database.LoadoutCombinations.ToList();
         _weapons = database.Weapons
             .Include(w => w.ReskinGroup)
             .Include(w => w.LoadoutCombos)
             .AsSplitQuery()
             .ToList();
+#endif
     }
 
     /// <summary>
@@ -41,13 +49,21 @@ public sealed class Generator
         if (!DatabaseFile.Exists())
             DatabaseFile.Unpack();
 
+#if NET8_0
         //_reskinGroups = database.ReskinGroups.ToList();
+        _loadoutCombinations = [.. database.LoadoutCombinations];
+        _weapons = [.. database.Weapons
+                       .Include(w => w.ReskinGroup)
+                       .Include(w => w.LoadoutCombos)
+                       .AsSplitQuery()];
+#else
         _loadoutCombinations = database.LoadoutCombinations.ToList();
         _weapons = database.Weapons
             .Include(w => w.ReskinGroup)
             .Include(w => w.LoadoutCombos)
             .AsSplitQuery()
             .ToList();
+#endif
     }
 
     /// <summary>
@@ -75,6 +91,8 @@ public sealed class Generator
             from weapon in _weapons
             where weapon.LoadoutCombos!.Contains(targetLoadoutCombo) && weapon.IsEnabled
             select weapon;
+
+        //TODO: throw up on the carpet when all the weapons were disabled, do NOT tell mom
 
         //With this option enabled, weapons are grouped by their ReskinGroup.
         //Each ReskinGroup adds only one of their weapons to the pool of possible weapons.
@@ -127,6 +145,10 @@ public sealed class Generator
         }
     }
 
+    /// <summary>
+    /// Returns all weapons enabled for this instance.
+    /// </summary>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing all weapons currently enabled for this instance.</returns>
     public IEnumerable<Weapon> GetEnabledWeapons()
     {
         return from weapon in _weapons
@@ -134,20 +156,30 @@ public sealed class Generator
                select weapon;
     }
 
+    /// <summary>
+    /// Returns all enabled weapons usable by the specified Team Fortress 2 class. This includes mutli-class weapons.
+    /// </summary>
+    /// <param name="targetClass">The target TF2 class.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing all weapons usable by specified class and currently enabled for this instance.</returns>
     public IEnumerable<Weapon> GetEnabledWeapons(TFClass targetClass)
     {
         var weaponLists = from loadoutCombo in _loadoutCombinations
-                           where loadoutCombo.Class == targetClass
-                           select loadoutCombo.Weapons;
+                          where loadoutCombo.Class == targetClass
+                          select loadoutCombo.Weapons;
 
         var result = new List<Weapon>();
-        foreach(var weaponList in weaponLists)
+        foreach (var weaponList in weaponLists)
         {
             result.AddRange(weaponList.Where(weapon => weapon.IsEnabled));
         }
         return result;
     }
 
+    /// <summary>
+    /// Returns all enabled weapons usable in the specified loadout slot. This includes weapons equippable in multiple slots for multiple classes.
+    /// </summary>
+    /// <param name="targetSlot">The target loadout slot.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing all weapons equippable in the specified loadout and currently enabled for this instance.</returns>
     public IEnumerable<Weapon> GetEnabledWeapons(TFSlot targetSlot)
     {
         var weaponLists = from loadoutCombo in _loadoutCombinations
@@ -162,6 +194,12 @@ public sealed class Generator
         return result;
     }
 
+    /// <summary>
+    /// Returns all enabled weapons usable in the specified loadout slot by the specified class.
+    /// </summary>
+    /// <param name="targetClass">The target TF2 class.</param>
+    /// <param name="targetSlot">The target loadout slot.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing all weapons equippable in the specified loadout by specified TF2 class and currently enabled for this instance.</returns>
     public IEnumerable<Weapon> GetEnabledWeapons(TFClass targetClass, TFSlot targetSlot)
     {
         if (targetClass != TFClass.Spy && targetSlot == TFSlot.Sapper)
@@ -202,6 +240,10 @@ public sealed class Generator
         }
     }
 
+    /// <summary>
+    /// Returns all weapons disabled for this instance.
+    /// </summary>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing all weapons currently disabled for this instance.</returns>
     public IEnumerable<Weapon> GetDisabledWeapons()
     {
         return from weapon in _weapons
@@ -209,6 +251,11 @@ public sealed class Generator
                select weapon;
     }
 
+    /// <summary>
+    /// Returns all disabled weapons usable by the specified Team Fortress 2 class. This includes mutli-class weapons.
+    /// </summary>
+    /// <param name="targetClass">The target TF2 class.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing all weapons usable by specified class and currently disabled for this instance.</returns>
     public IEnumerable<Weapon> GetDisabledWeapons(TFClass targetClass)
     {
         var weaponLists = from loadoutCombo in _loadoutCombinations
@@ -223,6 +270,11 @@ public sealed class Generator
         return result;
     }
 
+    /// <summary>
+    /// Returns all disabled weapons usable in the specified loadout slot. This includes weapons equippable in multiple slots for multiple classes.
+    /// </summary>
+    /// <param name="targetSlot">The target loadout slot.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing all weapons equippable in the specified loadout and currently disabled for this instance.</returns>
     public IEnumerable<Weapon> GetDisabledWeapons(TFSlot targetSlot)
     {
         var weaponLists = from loadoutCombo in _loadoutCombinations
@@ -237,6 +289,12 @@ public sealed class Generator
         return result;
     }
 
+    /// <summary>
+    /// Returns all disabled weapons usable in the specified loadout slot by the specified class.
+    /// </summary>
+    /// <param name="targetClass">The target TF2 class.</param>
+    /// <param name="targetSlot">The target loadout slot.</param>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing all weapons equippable in the specified loadout by specified TF2 class and currently disabled for this instance.</returns>
     public IEnumerable<Weapon> GetDisabledWeapons(TFClass targetClass, TFSlot targetSlot)
     {
         if (targetClass != TFClass.Spy && targetSlot == TFSlot.Sapper)
