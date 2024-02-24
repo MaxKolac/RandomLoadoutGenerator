@@ -12,7 +12,9 @@ This way you can minimize the odds of pulling different melee reskins 5 times in
 
 It uses a small built-in SQLite packaged as an embedded resource. 
 When you create a `Generator` instance, it unpacks this database into the `Environment.CurrentDirectory` (usually the same directory where your app's executable is).
+This database is queried once for every `Generator` instance. Any changes in that `Generator` instance will not be preserved inside the database file.
 
+TODO: Turns those weapons into disabled by default
 The database contains (almost) all weapons in Team Fortress 2 listed on the [official Wiki's page](https://wiki.teamfortress.com/wiki/Weapons) . A few expensive and hard/impossible-to-obtain variants were not included in the database. These are:
  - Golden Wrench
  - Saxxy
@@ -43,7 +45,7 @@ var randomSlot = Generator.RandomizeSlot();
 var randomSlot2 = Generator.RandomizeSlot(true);    //has a chance to be a TFSlot.Sapper
 ```
 
-You can also enable `Generator` to treat weapon reskins as a single weapon and have higher chances of returning a mechanically unique weapon by adding `true` as last 3rd argument.
+You can enable `Generator` to treat weapon reskins as a single weapon and have higher chances of returning a mechanically unique weapon by adding `true` as last 3rd argument.
 
 ```
 var weapon = generator.RandomizeWeapon(TFClass.Scout, TFSlot.Melee, true);
