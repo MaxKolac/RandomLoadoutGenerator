@@ -57,10 +57,11 @@ public class RandomizerTests
     }
 
     [Fact]
-    public static void AllWeaponsAreBeEnabledByDefault()
+    public static void AllWeaponsExceptFourAreEnabledByDefault()
     {
         var generator = new Generator(DbFixture);
-        Assert.Equal(generator.GetAllWeapons().Count(), generator.GetEnabledWeapons().Count());
+        Assert.Equal(generator.GetAllWeapons().Count() - 4, generator.GetEnabledWeapons().Count());
+        Assert.Equal(4, generator.GetDisabledWeapons().Count());
     }
 
     [Fact]
@@ -85,12 +86,12 @@ public class RandomizerTests
     {
         var generator = new Generator(DbFixture);
         generator.DisableWeapons(1, 2, 3);
-        Assert.Equal(generator.GetAllWeapons().Count() - 3, generator.GetEnabledWeapons().Count());
-        Assert.Equal(3, generator.GetDisabledWeapons().Count());
+        Assert.Equal(generator.GetAllWeapons().Count() - 7, generator.GetEnabledWeapons().Count());
+        Assert.Equal(7, generator.GetDisabledWeapons().Count());
 
         generator.EnableWeapons(2, 3);
-        Assert.Equal(generator.GetAllWeapons().Count() - 1, generator.GetEnabledWeapons().Count());
-        Assert.Single(generator.GetDisabledWeapons());
+        Assert.Equal(generator.GetAllWeapons().Count() - 5, generator.GetEnabledWeapons().Count());
+        Assert.Equal(5, generator.GetDisabledWeapons().Count());
     }
 
     [Theory]

@@ -16,8 +16,9 @@ It uses a small built-in SQLite packaged as an embedded resource.
 When you create a `Generator` instance, it unpacks this database into the `Environment.CurrentDirectory` (usually the same directory where your app's executable is).
 This database is queried once for every `Generator` instance. Any changes in that `Generator` instance will not be preserved inside the database file.
 
-TODO: Turns those weapons into disabled by default
-The database contains (almost) all weapons in Team Fortress 2 listed on the [official Wiki's page](https://wiki.teamfortress.com/wiki/Weapons) . A few expensive and hard/impossible-to-obtain variants were not included in the database. These are:
+The database contains all weapons in Team Fortress 2 listed on the [official Wiki's page](https://wiki.teamfortress.com/wiki/Weapons). 
+All of them are in the pool of possible outcomes by default.
+A few expensive and hard/impossible-to-obtain variants are disabled by default from the weapon pool. These are:
  - Golden Wrench
  - Saxxy
  - Golden Frying Pan
@@ -278,3 +279,9 @@ You can also take a look at `examples` folder on the GitHub repository for an ex
 | 198|Lugermorph|
 | 199|Pistol|
 | 200|Prinny Machete|
+| 201|Golden Frying Pan*|
+| 202|Golden Wrench*|
+| 203|Memory Maker*|
+| 204|Saxxy*|
+
+\* - these weapons are disabled from the weapon pool by default.

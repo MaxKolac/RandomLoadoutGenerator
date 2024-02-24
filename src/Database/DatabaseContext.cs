@@ -60,40 +60,40 @@ public class DatabaseContext : DbContext
         //CHANGING THE ORDER WILL BREAK THINGS IN WEAPON LIST UNLESS ADJUSTED ACCORDINGLY
         var loadoutcombos = new List<LoadoutCombination>()
         {
-            new(){ Class = TFClass.Scout, Slot = TFSlot.Primary },
+            new(){ Class = TFClass.Scout, Slot = TFSlot.Primary }, //0
             new(){ Class = TFClass.Scout, Slot = TFSlot.Secondary },
             new(){ Class = TFClass.Scout, Slot = TFSlot.Melee },
 
             new(){ Class = TFClass.Soldier, Slot = TFSlot.Primary },
             new(){ Class = TFClass.Soldier, Slot = TFSlot.Secondary },
-            new(){ Class = TFClass.Soldier, Slot = TFSlot.Melee },
+            new(){ Class = TFClass.Soldier, Slot = TFSlot.Melee }, //5
 
             new(){ Class = TFClass.Pyro, Slot = TFSlot.Primary },
             new(){ Class = TFClass.Pyro, Slot = TFSlot.Secondary },
             new(){ Class = TFClass.Pyro, Slot = TFSlot.Melee },
 
             new(){ Class = TFClass.Demoman, Slot = TFSlot.Primary },
-            new(){ Class = TFClass.Demoman, Slot = TFSlot.Secondary },
+            new(){ Class = TFClass.Demoman, Slot = TFSlot.Secondary }, //10
             new(){ Class = TFClass.Demoman, Slot = TFSlot.Melee },
 
             new(){ Class = TFClass.Heavy, Slot = TFSlot.Primary },
             new(){ Class = TFClass.Heavy, Slot = TFSlot.Secondary },
             new(){ Class = TFClass.Heavy, Slot = TFSlot.Melee },
 
-            new(){ Class = TFClass.Engineer, Slot = TFSlot.Primary },
+            new(){ Class = TFClass.Engineer, Slot = TFSlot.Primary }, //15
             new(){ Class = TFClass.Engineer, Slot = TFSlot.Secondary },
             new(){ Class = TFClass.Engineer, Slot = TFSlot.Melee },
 
             new(){ Class = TFClass.Medic, Slot = TFSlot.Primary },
             new(){ Class = TFClass.Medic, Slot = TFSlot.Secondary },
-            new(){ Class = TFClass.Medic, Slot = TFSlot.Melee },
+            new(){ Class = TFClass.Medic, Slot = TFSlot.Melee }, //20
 
             new(){ Class = TFClass.Sniper, Slot = TFSlot.Primary },
             new(){ Class = TFClass.Sniper, Slot = TFSlot.Secondary },
             new(){ Class = TFClass.Sniper, Slot = TFSlot.Melee },
 
             new(){ Class = TFClass.Spy, Slot = TFSlot.Primary },
-            new(){ Class = TFClass.Spy, Slot = TFSlot.Secondary },
+            new(){ Class = TFClass.Spy, Slot = TFSlot.Secondary }, //25
             new(){ Class = TFClass.Spy, Slot = TFSlot.Melee },
             new(){ Class = TFClass.Spy, Slot = TFSlot.Sapper },
         };
@@ -148,7 +148,8 @@ public class DatabaseContext : DbContext
 
             //Multi-class reskins
             new(){ Name = "StockPistolReskins" },
-            new(){ Name = "StockMeleeReskins" }
+            new(){ Name = "StockMeleeReskins" },
+            new(){ Name = "SpecialGoldenReskins" }
         };
         context.ReskinGroups.AddRange(reskinGroups);
         #endregion
@@ -161,7 +162,7 @@ public class DatabaseContext : DbContext
          * Multi-class weapons are sorted only by Name.
          * Spy's watches are considered as Secondary. Sappers have a separate slot.
          *
-         * This list excludes expensive and hard/impossible-to-obtain variants of weapons, such as Golden Frying Pan or Golden Wrench. Excluded from this list are also all PDAs since they have no unlockable variants. Full list of excluded items which the TF2 wiki categorized as distinct weapons:
+         * Some expensive and hard/impossible-to-obtain variants of weapons, such as Golden Frying Pan or Golden Wrench are disabled by default. Excluded from this list are all PDAs since they have no unlockable variants. Full list of items disabled by default which the TF2 wiki categorized as distinct weapons:
          * - Golden Wrench
          * - Saxxy
          * - Golden Frying Pan
@@ -1424,6 +1425,71 @@ public class DatabaseContext : DbContext
                 },
                 IsStock = true
             },
+            #endregion
+
+            #region Weapons disabled by default
+            new()
+            {
+                Name = "Golden Frying Pan",
+                LoadoutCombos = new LoadoutCombination[]
+                {
+                    loadoutcombos[2],
+                    loadoutcombos[5],
+                    loadoutcombos[8],
+                    loadoutcombos[11],
+                    loadoutcombos[14],
+                    loadoutcombos[17],
+                    loadoutcombos[20],
+                    loadoutcombos[23],
+                    loadoutcombos[26]
+                },
+                ReskinGroup = reskinGroups[28],
+                IsEnabled = false
+            },
+            new()
+            {
+                Name = "Golden Wrench",
+                LoadoutCombos = new LoadoutCombination[]
+                {
+                    loadoutcombos[17]
+                },
+                ReskinGroup = reskinGroups[28],
+                IsEnabled = false
+            },
+            new()
+            {
+                Name = "Memory Maker",
+                LoadoutCombos = new LoadoutCombination[]
+                {
+                    loadoutcombos[2],
+                    loadoutcombos[5],
+                    loadoutcombos[8],
+                    loadoutcombos[11],
+                    loadoutcombos[14],
+                    loadoutcombos[20],
+                    loadoutcombos[23]
+                },
+                ReskinGroup = reskinGroups[27],
+                IsEnabled = false
+            },
+            new()
+            {
+                Name = "Saxxy",
+                LoadoutCombos = new LoadoutCombination[]
+                {
+                    loadoutcombos[2],
+                    loadoutcombos[5],
+                    loadoutcombos[8],
+                    loadoutcombos[11],
+                    loadoutcombos[14],
+                    loadoutcombos[17],
+                    loadoutcombos[20],
+                    loadoutcombos[23],
+                    loadoutcombos[26]
+                },
+                ReskinGroup = reskinGroups[28],
+                IsEnabled = false
+            }
             #endregion
         };
         context.Weapons.AddRange(weapons);
