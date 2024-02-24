@@ -7,7 +7,6 @@ namespace RandomLoadoutGeneratorTests;
 public class RandomizerTests
 {
     static readonly DatabaseContext DbFixture = new(Microsoft.Data.Sqlite.SqliteOpenMode.ReadOnly);
-    const int TotalWeaponsCount = 200; //The amount of all weapons currently in the database
 
     public static IEnumerable<object[]> GetAllExistingLoadoutCombos()
     {
@@ -61,7 +60,7 @@ public class RandomizerTests
     public static void AllWeaponsAreBeEnabledByDefault()
     {
         var generator = new Generator(DbFixture);
-        Assert.Equal(TotalWeaponsCount, generator.GetEnabledWeapons().Count());
+        Assert.Equal(generator.GetAllWeapons().Count(), generator.GetEnabledWeapons().Count());
     }
 
     [Fact]
@@ -86,11 +85,11 @@ public class RandomizerTests
     {
         var generator = new Generator(DbFixture);
         generator.DisableWeapons(1, 2, 3);
-        Assert.Equal(TotalWeaponsCount - 3, generator.GetEnabledWeapons().Count());
+        Assert.Equal(generator.GetAllWeapons().Count() - 3, generator.GetEnabledWeapons().Count());
         Assert.Equal(3, generator.GetDisabledWeapons().Count());
 
         generator.EnableWeapons(2, 3);
-        Assert.Equal(TotalWeaponsCount - 1, generator.GetEnabledWeapons().Count());
+        Assert.Equal(generator.GetAllWeapons().Count() - 1, generator.GetEnabledWeapons().Count());
         Assert.Single(generator.GetDisabledWeapons());
     }
 

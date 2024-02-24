@@ -313,6 +313,12 @@ public sealed class Generator
     }
 
     /// <summary>
+    /// Returns all weapons in the instance.
+    /// </summary>
+    /// <returns>An <see cref="IEnumerable{T}"/> containing all available weapons.</returns>
+    public IEnumerable<Weapon> GetAllWeapons() => _weapons;
+
+    /// <summary>
     /// Returns one of the Team Fortress 2 playable classes, based on random chance.<br/>
     /// Be careful when randomizing both <see cref="TFSlot"/> and <see cref="TFClass"/> and passing it to <see cref="RandomizeWeapon(TFClass, TFSlot, bool)"/>, you might end up with an invalid combination.
     /// </summary>
