@@ -11,13 +11,13 @@
     <Product />
     <Description>A C# library for generating random weapon loadouts for playable classes in Team Fortress 2</Description>
     <PackageTags>tf2; rng; random; generator; loadout; team; fortress; weapon</PackageTags>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl></PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/MaxKolac/RandomLoadoutGenerator</RepositoryUrl>
-    <PackageReleaseNotes>Initial release</PackageReleaseNotes>
+    <PackageReleaseNotes>Added ability to add/remove weapons from the main weapon pool.</PackageReleaseNotes>
     <Copyright></Copyright>
   </PropertyGroup>
 
