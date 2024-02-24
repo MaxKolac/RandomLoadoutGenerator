@@ -63,6 +63,15 @@ generator.EnableWeapon(0, 3);
 generator.DisableWeapon(1, 2, 3, 4);
 ```
 
+You can check what weapons are disabled or enabled in total, for each slot, for each class or a combination of the two.
+Each getter method returns an `IEnumerable<Weapon>`.
+
+```
+var allEnableWeapons = generator.GetEnabledWeapons();
+var enabledPyroWeapons = generator.GetEnabledWeapons(TFClass.Pyro);
+var disabledSniperSecondaries = generator.GetDisabledWeapons(TFClass.Sniper, TFSlot.Secondary);
+```
+
 You can also take a look at `examples` folder on the GitHub repository for an example project. It's a simple console app that generates a new random loadout for a random class everytime you press Enter.
 
 ## Weapon ID table
