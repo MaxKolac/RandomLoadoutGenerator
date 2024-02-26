@@ -6,9 +6,6 @@ namespace RandomLoadoutGeneratorTests;
 
 public class RandomizerTests
 {
-    //This does not work the way I thought, changes are persisting between individual tests of a single Theory method
-    //static readonly DatabaseContext new DatabaseContext() = new(Microsoft.Data.Sqlite.SqliteOpenMode.ReadOnly);
-
     public static IEnumerable<object[]> GetAllLoadoutCombos()
     {
         foreach (var combo in new DatabaseContext().LoadoutCombinations)
@@ -328,6 +325,41 @@ public class RandomizerTests
         Assert.Throws<ArgumentException>(() =>
         {
             generator.GetEnabledWeapons(targetClass, targetSlot);
+        });
+    }
+
+    [Theory]
+    [MemberData(nameof(GetDisabledWeaponsCountPerClass), MemberType = typeof(RandomizerTests))]
+    public static void GetDisabledWeaponsReturnsCorrectlyForClasses(TFClass targetClass, int expectedAmount)
+    {
+        var generator = new Generator();
+        Assert.Equal(expectedAmount, generator.GetDisabledWeapons(targetClass).Count());
+    }
+
+    [Theory]
+    [MemberData(nameof(GetDisabledWeaponsCountPerSlot), MemberType = typeof(RandomizerTests))]
+    public static void GetDisabledWeaponsReturnsCorrectlyForSlots(TFSlot targetSlot, int expectedAmount)
+    {
+        var generator = new Generator();
+        Assert.Equal(expectedAmount, generator.GetDisabledWeapons(targetSlot).Count());
+    }
+
+    [Theory]
+    [MemberData(nameof(GetDisabledWeaponsCountPerClassAndSlot), MemberType = typeof(RandomizerTests))]
+    public static void GetDisabledWeaponsReturnsCorrectlyForClassesAndSlots(TFClass targetClass, TFSlot targetSlot, int expectedAmount)
+    {
+        var generator = new Generator();
+        Assert.Equal(expectedAmount, generator.GetDisabledWeapons(targetClass, targetSlot).Count());
+    }
+
+    [Theory]
+    [MemberData(nameof(GetInvalidLoadoutCombos), MemberType = typeof(RandomizerTests))]
+    public static void GetDisabledWeaponsForInvalidLoadoutCombosThrowsArugmentException(TFClass targetClass, TFSlot targetSlot)
+    {
+        var generator = new Generator();
+        Assert.Throws<ArgumentException>(() =>
+        {
+            generator.GetDisabledWeapons(targetClass, targetSlot);
         });
     }
     #endregion
