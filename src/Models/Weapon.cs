@@ -50,7 +50,7 @@ public class Weapon
     /// Accessor member - many-to-many relation. Use this to access all the <see cref="LoadoutCombination"/>s this weapon is included in.
     /// </summary>
     public IList<LoadoutCombination>? LoadoutCombos { get; set; }
-    
+
     /// <inheritdoc/>
     public override string ToString()
     {

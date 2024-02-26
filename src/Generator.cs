@@ -5,7 +5,7 @@ using RandomLoadoutGenerator.Models;
 namespace RandomLoadoutGenerator;
 
 /// <summary>
-/// A class with methods meant for randomizing Team Fortress 2 classes. weapons and slots.
+/// A class with methods meant for randomizing Team Fortress 2 classes, weapons and slots.
 /// </summary>
 public sealed class Generator
 {

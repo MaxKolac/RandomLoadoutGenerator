@@ -1,6 +1,4 @@
-﻿using RandomLoadoutGenerator.Database;
-
-namespace RandomLoadoutGeneratorTests
+﻿namespace RandomLoadoutGeneratorTests
 {
     public static class DatabaseGeneration
     {

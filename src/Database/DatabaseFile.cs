@@ -25,12 +25,12 @@ namespace RandomLoadoutGenerator.Database
         /// </summary>
         public static void Unpack()
         {
-            var assembly = typeof(DatabaseFile).GetTypeInfo().Assembly; 
+            var assembly = typeof(DatabaseFile).GetTypeInfo().Assembly;
             using Stream resource = assembly.GetManifestResourceStream("RandomLoadoutGenerator.Database." + Filename)!;
 
             using var reader = new StreamReader(resource);
             using var writer = File.OpenWrite(FullPath);
-            resource.CopyTo(writer);            
+            resource.CopyTo(writer);
         }
 
         public static bool Exists() => File.Exists(FullPath);
