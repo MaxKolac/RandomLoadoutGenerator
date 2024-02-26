@@ -322,6 +322,51 @@ public sealed class Generator
     /// <returns>An <see cref="IEnumerable{T}"/> containing all available weapons.</returns>
     public IEnumerable<Weapon> GetAllWeapons() => _weapons;
 
+    public IEnumerable<Weapon> GetAllWeapons(TFClass targetClass)
+    {
+        var weaponLists = from loadoutCombo in _loadoutCombinations
+                          where loadoutCombo.Class == targetClass
+                          select loadoutCombo.Weapons;
+
+        var result = new List<Weapon>();
+        foreach (var weaponList in weaponLists)
+        {
+            result.AddRange(weaponList);
+        }
+        return result.Distinct();
+    }
+
+    public IEnumerable<Weapon> GetAllWeapons(TFSlot targetSlot)
+    {
+        var weaponLists = from loadoutCombo in _loadoutCombinations
+                          where loadoutCombo.Slot == targetSlot
+                          select loadoutCombo.Weapons;
+
+        var result = new List<Weapon>();
+        foreach (var weaponList in weaponLists)
+        {
+            result.AddRange(weaponList);
+        }
+        return result.Distinct();
+    }
+
+    public IEnumerable<Weapon> GetAllWeapons(TFClass targetClass, TFSlot targetSlot)
+    {
+        if (targetClass != TFClass.Spy && targetSlot == TFSlot.Sapper)
+            throw new ArgumentException($"{targetClass} and {targetSlot} is not a valid combination.");
+
+        var weaponLists = from loadoutCombo in _loadoutCombinations
+                          where loadoutCombo.Class == targetClass && loadoutCombo.Slot == targetSlot
+                          select loadoutCombo.Weapons;
+
+        var result = new List<Weapon>();
+        foreach (var weaponList in weaponLists)
+        {
+            result.AddRange(weaponList);
+        }
+        return result;
+    }
+
     /// <summary>
     /// Returns one of the Team Fortress 2 playable classes, based on random chance.<br/>
     /// Be careful when randomizing both <see cref="TFSlot"/> and <see cref="TFClass"/> and passing it to <see cref="RandomizeWeapon(TFClass, TFSlot, bool)"/>, you might end up with an invalid combination.
