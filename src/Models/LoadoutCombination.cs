@@ -1,7 +1,7 @@
 ﻿namespace RandomLoadoutGenerator.Models;
 
 /// <summary>
-/// Describes which class can equip a certain weapon, and in which slot. 
+/// Describes which class can equip a certain weapon, and in which slot.<br/>
 /// </summary>
 public class LoadoutCombination
 {

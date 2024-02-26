@@ -31,6 +31,10 @@ public class Weapon
     /// Default is <c>false</c>.
     /// </summary>
     public bool IsStock { get; set; } = false;
+    /// <summary>
+    /// If a weapon is enabled, it means it's in the pool of possible outcomes. Disabling a weapon removes it from the pool and makes it impossible to randomly get this weapon until it's re-enabled.
+    /// </summary>
+    public bool IsEnabled { get; set; } = true;
 
     /// <summary>
     /// The ID of the <see cref="Models.ReskinGroup"/> to which this weapon belongs. <c>null</c> means that this weapon does not have any reskins.
@@ -46,7 +50,7 @@ public class Weapon
     /// Accessor member - many-to-many relation. Use this to access all the <see cref="LoadoutCombination"/>s this weapon is included in.
     /// </summary>
     public IList<LoadoutCombination>? LoadoutCombos { get; set; }
-    
+
     /// <inheritdoc/>
     public override string ToString()
     {
