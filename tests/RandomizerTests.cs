@@ -267,9 +267,6 @@ public class RandomizerTests
 
     #region Enabling/Disabling and GetEnabledWeapons/GetDisabledWeapons
     [Fact]
-    //POSSIBLY PROBLEMATIC
-    //At normal session it fails, expected value: 197, actual: 194
-    //When debugged all is fine, including enabling/disabling specified weapons
     public static void EnablingDisablingWeaponsChangesTheirCount()
     {
         var generator = new Generator();
