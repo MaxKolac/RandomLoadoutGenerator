@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="RandomLoadoutGenerator" Version="1.1.1" />
+    <PackageReference Include="RandomLoadoutGenerator" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
