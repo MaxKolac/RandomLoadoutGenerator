@@ -39,34 +39,6 @@ public sealed class Generator
     }
 
     /// <summary>
-    /// Creates a new <see cref="Generator"/> instance and attempts to populate its fields with records from the passed <see cref="DatabaseContext"/> instance.
-    /// </summary>
-    /// <param name="database">DI of <see cref="DatabaseContext"/>. Instance will query all tables from this context.</param>
-    public Generator(DatabaseContext database)
-    {
-        //Despite this constructor not technically using the DB file
-        //unit-testing requires that it is there
-        if (!DatabaseFile.Exists())
-            DatabaseFile.Unpack();
-
-#if NET8_0
-        //_reskinGroups = database.ReskinGroups.ToList();
-        _loadoutCombinations = [.. database.LoadoutCombinations];
-        _weapons = [.. database.Weapons
-                       .Include(w => w.ReskinGroup)
-                       .Include(w => w.LoadoutCombos)
-                       .AsSplitQuery()];
-#else
-        _loadoutCombinations = database.LoadoutCombinations.ToList();
-        _weapons = database.Weapons
-            .Include(w => w.ReskinGroup)
-            .Include(w => w.LoadoutCombos)
-            .AsSplitQuery()
-            .ToList();
-#endif
-    }
-
-    /// <summary>
     /// Randomizes a single weapon for the given class and the given slot.<br/>
     /// <see cref="ArgumentException"/> will be thrown if the passed class/slot combo is not valid, such as <see cref="TFClass.Scout"/> with <see cref="TFSlot.Sapper"/>.<br/>
     /// <see cref="InvalidOperationException"/> will be thrown if all weapons for the given class and slot are disabled.

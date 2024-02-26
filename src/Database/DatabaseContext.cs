@@ -20,7 +20,7 @@ public class DatabaseContext : DbContext
     /// Creates a new instance. See <see cref="DbContext()"/> for more info.
     /// </summary>
     /// <param name="connectionMode">Determines the connection type. See <see cref="SqliteOpenMode"/> enum for more info.</param>
-    public DatabaseContext(SqliteOpenMode connectionMode = SqliteOpenMode.ReadWriteCreate) : base()
+    public DatabaseContext(SqliteOpenMode connectionMode = SqliteOpenMode.ReadOnly) : base()
     {
         _connectionMode = connectionMode;
     }
@@ -28,7 +28,7 @@ public class DatabaseContext : DbContext
     /// <inheritdoc cref="DatabaseContext(SqliteOpenMode)"/>
     /// <param name="optionsBuilder">Allows for additional configuration of the instance through an option builder.</param>
     /// <param name="connectionMode">Determines the connection type. See <see cref="SqliteOpenMode"/> enum for more info.</param>
-    public DatabaseContext(DbContextOptionsBuilder optionsBuilder, SqliteOpenMode connectionMode = SqliteOpenMode.ReadWriteCreate) : base(optionsBuilder.Options)
+    public DatabaseContext(DbContextOptionsBuilder optionsBuilder, SqliteOpenMode connectionMode = SqliteOpenMode.ReadOnly) : base(optionsBuilder.Options)
     {
         _connectionMode = connectionMode;
     }
@@ -51,7 +51,7 @@ public class DatabaseContext : DbContext
     /// </summary>
     internal static void Purge()
     {
-        using var context = new DatabaseContext();
+        using var context = new DatabaseContext(SqliteOpenMode.ReadWriteCreate);
         context.Database.EnsureDeleted();
         context.Database.Migrate();
         context.SaveChanges();

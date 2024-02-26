@@ -6,10 +6,12 @@ namespace RandomLoadoutGeneratorTests;
 
 public class RandomizerTests
 {
+    //This does not work the way I thought, changes are persisting between individual tests of a single Theory method
+    //static readonly DatabaseContext new DatabaseContext() = new(Microsoft.Data.Sqlite.SqliteOpenMode.ReadOnly);
 
     public static IEnumerable<object[]> GetAllLoadoutCombos()
     {
-        foreach (var combo in DbFixture.LoadoutCombinations)
+        foreach (var combo in new DatabaseContext().LoadoutCombinations)
         {
             yield return new object[] { combo };
         }
@@ -191,7 +193,7 @@ public class RandomizerTests
     [MemberData(nameof(GetInvalidLoadoutCombos), MemberType = typeof(RandomizerTests))]
     public static void RandomizingForInvalidLoadoutComboThrowsArgumentException(TFClass targetClass, TFSlot targetSlot)
     {
-        var randomizer = new Generator(DbFixture);
+        var randomizer = new Generator();
         Assert.Throws<ArgumentException>(() =>
         {
             randomizer.RandomizeWeapon(targetClass, targetSlot);
@@ -219,7 +221,7 @@ public class RandomizerTests
     [Fact]
     public static void AllWeaponsExceptFourAreEnabledByDefault()
     {
-        var generator = new Generator(DbFixture);
+        var generator = new Generator();
         Assert.Equal(generator.GetAllWeapons().Count() - 4, generator.GetEnabledWeapons().Count());
         Assert.Equal(4, generator.GetDisabledWeapons().Count());
     }
@@ -228,7 +230,7 @@ public class RandomizerTests
     public static void DisabledWeaponsAreNotAnOutcome()
     {
         //Test on spy's sappers
-        var generator = new Generator(DbFixture);
+        var generator = new Generator();
         generator.DisableWeapons(126); //Red-Tape Recorder
         generator.DisableWeapons(188, 189); //Stock sapper reskins, not the stock sapper itself - Ap-Sap & Snack Attack
         for (int i = 0; i < 5; i++)
@@ -238,13 +240,39 @@ public class RandomizerTests
         }
     }
 
+    [Theory]
+    [MemberData(nameof(GetAllLoadoutCombos), MemberType = typeof(RandomizerTests))]
+    public static void RandomizingForLoadoutComboWhenAllWeaponsForThatComboAreDisabledThrows(LoadoutCombination loadoutCombo)
+    {
+        var generator = new Generator();
+
+        var allWeaponsForClassAndSlot = from weapon in generator.GetAllWeapons(loadoutCombo.Class, loadoutCombo.Slot)
+                                        select weapon.ID;
+
+        foreach (var id in allWeaponsForClassAndSlot)
+        {
+            generator.DisableWeapons(id);
+        }
+        Assert.Equal(allWeaponsForClassAndSlot.Count(), generator.GetDisabledWeapons(loadoutCombo.Class, loadoutCombo.Slot).Count());
+        Assert.Empty(generator.GetEnabledWeapons(loadoutCombo.Class, loadoutCombo.Slot));
+
+        if (loadoutCombo.Class != TFClass.Spy && loadoutCombo.Slot == TFSlot.Sapper)
+            return;
+        Assert.Throws<InvalidOperationException>(() =>
+        {
+            generator.RandomizeWeapon(loadoutCombo.Class, loadoutCombo.Slot);
+        });
+    }
+    #endregion
+
+    #region Enabling/Disabling and GetEnabledWeapons/GetDisabledWeapons
     [Fact]
     //POSSIBLY PROBLEMATIC
     //At normal session it fails, expected value: 197, actual: 194
     //When debugged all is fine, including enabling/disabling specified weapons
     public static void EnablingDisablingWeaponsChangesTheirCount()
     {
-        var generator = new Generator(DbFixture);
+        var generator = new Generator();
         generator.DisableWeapons(1, 2, 3);
         Assert.Equal(generator.GetAllWeapons().Count() - 7, generator.GetEnabledWeapons().Count());
         Assert.Equal(7, generator.GetDisabledWeapons().Count());
@@ -260,7 +288,7 @@ public class RandomizerTests
     [InlineData(69696969)]
     public static void EnablingDisablingInvalidIDsThrowsArgumentExceptions(int invalidId)
     {
-        var generator = new Generator(DbFixture);
+        var generator = new Generator();
         Assert.Throws<ArgumentException>(() =>
         {
             generator.DisableWeapons(invalidId);
@@ -275,7 +303,7 @@ public class RandomizerTests
     [MemberData(nameof(GetEnabledWeaponsCountPerClass), MemberType = typeof(RandomizerTests))]
     public static void GetEnabledWeaponsReturnsCorrectlyForClasses(TFClass targetClass, int expectedAmount)
     {
-        var generator = new Generator(DbFixture);
+        var generator = new Generator();
         Assert.Equal(expectedAmount, generator.GetEnabledWeapons(targetClass).Count());
     }
 
@@ -283,7 +311,7 @@ public class RandomizerTests
     [MemberData(nameof(GetEnabledWeaponsCountPerSlot), MemberType = typeof(RandomizerTests))]
     public static void GetEnabledWeaponsReturnsCorrectlyForSlots(TFSlot targetSlot, int expectedAmount)
     {
-        var generator = new Generator(DbFixture);
+        var generator = new Generator();
         Assert.Equal(expectedAmount, generator.GetEnabledWeapons(targetSlot).Count());
     }
 
@@ -291,7 +319,7 @@ public class RandomizerTests
     [MemberData(nameof(GetEnabledWeaponsCountPerClassAndSlot), MemberType = typeof(RandomizerTests))]
     public static void GetEnabledWeaponsReturnsCorrectlyForClassesAndSlots(TFClass targetClass, TFSlot targetSlot, int expectedAmount)
     {
-        var generator = new Generator(DbFixture);
+        var generator = new Generator();
         Assert.Equal(expectedAmount, generator.GetEnabledWeapons(targetClass, targetSlot).Count());
     }
 
@@ -299,7 +327,7 @@ public class RandomizerTests
     [MemberData(nameof(GetInvalidLoadoutCombos), MemberType = typeof(RandomizerTests))]
     public static void GetEnabledWeaponsForInvalidLoadoutCombosThrowsArugmentException(TFClass targetClass, TFSlot targetSlot)
     {
-        var generator = new Generator(DbFixture);
+        var generator = new Generator();
         Assert.Throws<ArgumentException>(() =>
         {
             generator.GetEnabledWeapons(targetClass, targetSlot);
