@@ -55,22 +55,26 @@ var weapon = generator.RandomizeWeapon(TFClass.Scout, TFSlot.Melee, true);
 ```
 
 You can disable and enable weapons to completely disallow them from being a possible outcome. 
-You can choose the weapon to enable/disable by passing its ID. You can either look into the database itself or reference the ID table at the bottom of this README.
+You can choose the weapon to enable/disable by passing its ID. You can reference the ID table at the bottom of this `README.md`.
 
-All weapons are enabled by default. Keep in mind that disabled weapons will be disabled only for that instance. A new `Generator` instance will have all weapons re-enabled.
+Attempting to randomize, for example a Secondary for Heavy, while all Heavy's secondary weapons are disabled, will throw an `InvalidOperationException`. `Generator` will not be able to randomize a weapon when all weapons meeting the loadout combination criteria are disabled.
+
+Keep in mind that disabled weapons will be disabled only for that instance. A new `Generator` instance will have weapons with their respective initial `Weapon.IsEnabled` values.
 
 ```
 generator.EnableWeapon(0, 3);
 generator.DisableWeapon(1, 2, 3, 4);
+generator.DisableWeapon(121);
 ```
 
 You can check what weapons are disabled or enabled in total, for each slot, for each class or a combination of the two.
 Each getter method returns an `IEnumerable<Weapon>`.
 
 ```
-var allEnableWeapons = generator.GetEnabledWeapons();
+var allEnabledWeapons = generator.GetEnabledWeapons();
 var enabledPyroWeapons = generator.GetEnabledWeapons(TFClass.Pyro);
 var disabledSniperSecondaries = generator.GetDisabledWeapons(TFClass.Sniper, TFSlot.Secondary);
+var allWeaponsForDemoman = generator.GetAllWeapons(TFClass.Demoman);
 ```
 
 You can also take a look at `examples` folder on the GitHub repository for an example project. It's a simple console app that generates a new random loadout for a random class everytime you press Enter.
