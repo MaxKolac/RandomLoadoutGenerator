@@ -6,17 +6,16 @@ namespace RandomLoadoutGeneratorTests;
 
 public class RandomizerTests
 {
-    static readonly DatabaseContext DbFixture = new(Microsoft.Data.Sqlite.SqliteOpenMode.ReadOnly);
 
-    public static IEnumerable<object[]> GetAllExistingLoadoutCombos()
+    public static IEnumerable<object[]> GetAllLoadoutCombos()
     {
         foreach (var combo in DbFixture.LoadoutCombinations)
         {
-            yield return new object[] { combo, 5 };
+            yield return new object[] { combo };
         }
     }
 
-    public static IEnumerable<object[]> GetAllInvalidLoadoutCombos()
+    public static IEnumerable<object[]> GetInvalidLoadoutCombos()
     {
         yield return new object[] { TFClass.Scout, TFSlot.Sapper };
         yield return new object[] { TFClass.Soldier, TFSlot.Sapper };
@@ -28,8 +27,168 @@ public class RandomizerTests
         yield return new object[] { TFClass.Sniper, TFSlot.Sapper };
     }
 
+    public static IEnumerable<object[]> GetEnabledWeaponsCountPerClass()
+    {
+        yield return new object[] { TFClass.Scout, 36 };
+        yield return new object[] { TFClass.Soldier, 34 };
+        yield return new object[] { TFClass.Pyro, 36 };
+        yield return new object[] { TFClass.Demoman, 33 };
+        yield return new object[] { TFClass.Heavy, 32 };
+        yield return new object[] { TFClass.Engineer, 19 };
+        yield return new object[] { TFClass.Medic, 21 };
+        yield return new object[] { TFClass.Sniper, 29 };
+        yield return new object[] { TFClass.Spy, 24 };
+    }
+
+    public static IEnumerable<object[]> GetEnabledWeaponsCountPerSlot()
+    {
+        yield return new object[] { TFSlot.Primary, 61 };
+        yield return new object[] { TFSlot.Secondary, 59 };
+        yield return new object[] { TFSlot.Melee, 79 };
+        yield return new object[] { TFSlot.Sapper, 4 };
+    }
+
+    public static IEnumerable<object[]> GetEnabledWeaponsCountPerClassAndSlot()
+    {
+        yield return new object[] { TFClass.Scout, TFSlot.Primary, 6 };
+        yield return new object[] { TFClass.Scout, TFSlot.Secondary, 10 };
+        yield return new object[] { TFClass.Scout, TFSlot.Melee, 20 };
+        yield return new object[] { TFClass.Soldier, TFSlot.Primary, 9 };
+        yield return new object[] { TFClass.Soldier, TFSlot.Secondary, 10 };
+        yield return new object[] { TFClass.Soldier, TFSlot.Melee, 15 };
+        yield return new object[] { TFClass.Pyro, TFSlot.Primary, 7 };
+        yield return new object[] { TFClass.Pyro, TFSlot.Secondary, 9 };
+        yield return new object[] { TFClass.Pyro, TFSlot.Melee, 20 };
+        yield return new object[] { TFClass.Demoman, TFSlot.Primary, 7 };
+        yield return new object[] { TFClass.Demoman, TFSlot.Secondary, 7 };
+        yield return new object[] { TFClass.Demoman, TFSlot.Melee, 19 };
+        yield return new object[] { TFClass.Heavy, TFSlot.Primary, 6 };
+        yield return new object[] { TFClass.Heavy, TFSlot.Secondary, 9 };
+        yield return new object[] { TFClass.Heavy, TFSlot.Melee, 17 };
+        yield return new object[] { TFClass.Engineer, TFSlot.Primary, 6 };
+        yield return new object[] { TFClass.Engineer, TFSlot.Secondary, 6 };
+        yield return new object[] { TFClass.Engineer, TFSlot.Melee, 7 };
+        yield return new object[] { TFClass.Medic, TFSlot.Primary, 4 };
+        yield return new object[] { TFClass.Medic, TFSlot.Secondary, 4 };
+        yield return new object[] { TFClass.Medic, TFSlot.Melee, 13 };
+        yield return new object[] { TFClass.Sniper, TFSlot.Primary, 10 };
+        yield return new object[] { TFClass.Sniper, TFSlot.Secondary, 7 };
+        yield return new object[] { TFClass.Sniper, TFSlot.Melee, 12 };
+        yield return new object[] { TFClass.Spy, TFSlot.Primary, 6 };
+        yield return new object[] { TFClass.Spy, TFSlot.Secondary, 5 };
+        yield return new object[] { TFClass.Spy, TFSlot.Melee, 9 };
+        yield return new object[] { TFClass.Spy, TFSlot.Sapper, 4 };
+    }
+
+    public static IEnumerable<object[]> GetDisabledWeaponsCountPerClass()
+    {
+        yield return new object[] { TFClass.Scout, 3 };
+        yield return new object[] { TFClass.Soldier, 3 };
+        yield return new object[] { TFClass.Pyro, 3 };
+        yield return new object[] { TFClass.Demoman, 3 };
+        yield return new object[] { TFClass.Heavy, 3 };
+        yield return new object[] { TFClass.Engineer, 3 };
+        yield return new object[] { TFClass.Medic, 3 };
+        yield return new object[] { TFClass.Sniper, 3 };
+        yield return new object[] { TFClass.Spy, 2 };
+    }
+
+    public static IEnumerable<object[]> GetDisabledWeaponsCountPerSlot()
+    {
+        yield return new object[] { TFSlot.Primary, 0 };
+        yield return new object[] { TFSlot.Secondary, 0 };
+        yield return new object[] { TFSlot.Melee, 4 };
+        yield return new object[] { TFSlot.Sapper, 0 };
+    }
+
+    public static IEnumerable<object[]> GetDisabledWeaponsCountPerClassAndSlot()
+    {
+        yield return new object[] { TFClass.Scout, TFSlot.Primary, 0 };
+        yield return new object[] { TFClass.Scout, TFSlot.Secondary, 0 };
+        yield return new object[] { TFClass.Scout, TFSlot.Melee, 3 };
+        yield return new object[] { TFClass.Soldier, TFSlot.Primary, 0 };
+        yield return new object[] { TFClass.Soldier, TFSlot.Secondary, 0 };
+        yield return new object[] { TFClass.Soldier, TFSlot.Melee, 3 };
+        yield return new object[] { TFClass.Pyro, TFSlot.Primary, 0 };
+        yield return new object[] { TFClass.Pyro, TFSlot.Secondary, 0 };
+        yield return new object[] { TFClass.Pyro, TFSlot.Melee, 3 };
+        yield return new object[] { TFClass.Demoman, TFSlot.Primary, 0 };
+        yield return new object[] { TFClass.Demoman, TFSlot.Secondary, 0 };
+        yield return new object[] { TFClass.Demoman, TFSlot.Melee, 3 };
+        yield return new object[] { TFClass.Heavy, TFSlot.Primary, 0 };
+        yield return new object[] { TFClass.Heavy, TFSlot.Secondary, 0 };
+        yield return new object[] { TFClass.Heavy, TFSlot.Melee, 3 };
+        yield return new object[] { TFClass.Engineer, TFSlot.Primary, 0 };
+        yield return new object[] { TFClass.Engineer, TFSlot.Secondary, 0 };
+        yield return new object[] { TFClass.Engineer, TFSlot.Melee, 3 };
+        yield return new object[] { TFClass.Medic, TFSlot.Primary, 0 };
+        yield return new object[] { TFClass.Medic, TFSlot.Secondary, 0 };
+        yield return new object[] { TFClass.Medic, TFSlot.Melee, 3 };
+        yield return new object[] { TFClass.Sniper, TFSlot.Primary, 0 };
+        yield return new object[] { TFClass.Sniper, TFSlot.Secondary, 0 };
+        yield return new object[] { TFClass.Sniper, TFSlot.Melee, 3 };
+        yield return new object[] { TFClass.Spy, TFSlot.Primary, 0 };
+        yield return new object[] { TFClass.Spy, TFSlot.Secondary, 0 };
+        yield return new object[] { TFClass.Spy, TFSlot.Melee, 2 };
+        yield return new object[] { TFClass.Spy, TFSlot.Sapper, 0 };
+    }
+
+    public static IEnumerable<object[]> GetAllWeaponsCountPerClass()
+    {
+        yield return new object[] { TFClass.Scout, 39 };
+        yield return new object[] { TFClass.Soldier, 37 };
+        yield return new object[] { TFClass.Pyro, 39 };
+        yield return new object[] { TFClass.Demoman, 36 };
+        yield return new object[] { TFClass.Heavy, 35 };
+        yield return new object[] { TFClass.Engineer, 22 };
+        yield return new object[] { TFClass.Medic, 24 };
+        yield return new object[] { TFClass.Sniper, 32 };
+        yield return new object[] { TFClass.Spy, 26 };
+    }
+
+    public static IEnumerable<object[]> GetAllWeaponsCountPerSlot()
+    {
+        yield return new object[] { TFSlot.Primary, 61 };
+        yield return new object[] { TFSlot.Secondary, 59 };
+        yield return new object[] { TFSlot.Melee, 83 };
+        yield return new object[] { TFSlot.Sapper, 4 };
+    }
+
+    public static IEnumerable<object[]> GetAllWeaponsCountPerClassAndSlot()
+    {
+        yield return new object[] { TFClass.Scout, TFSlot.Primary, 6 };
+        yield return new object[] { TFClass.Scout, TFSlot.Secondary, 10 };
+        yield return new object[] { TFClass.Scout, TFSlot.Melee, 23 };
+        yield return new object[] { TFClass.Soldier, TFSlot.Primary, 9 };
+        yield return new object[] { TFClass.Soldier, TFSlot.Secondary, 10 };
+        yield return new object[] { TFClass.Soldier, TFSlot.Melee, 18 };
+        yield return new object[] { TFClass.Pyro, TFSlot.Primary, 7 };
+        yield return new object[] { TFClass.Pyro, TFSlot.Secondary, 9 };
+        yield return new object[] { TFClass.Pyro, TFSlot.Melee, 23 };
+        yield return new object[] { TFClass.Demoman, TFSlot.Primary, 7 };
+        yield return new object[] { TFClass.Demoman, TFSlot.Secondary, 7 };
+        yield return new object[] { TFClass.Demoman, TFSlot.Melee, 22 };
+        yield return new object[] { TFClass.Heavy, TFSlot.Primary, 6 };
+        yield return new object[] { TFClass.Heavy, TFSlot.Secondary, 9 };
+        yield return new object[] { TFClass.Heavy, TFSlot.Melee, 20 };
+        yield return new object[] { TFClass.Engineer, TFSlot.Primary, 6 };
+        yield return new object[] { TFClass.Engineer, TFSlot.Secondary, 6 };
+        yield return new object[] { TFClass.Engineer, TFSlot.Melee, 10 };
+        yield return new object[] { TFClass.Medic, TFSlot.Primary, 4 };
+        yield return new object[] { TFClass.Medic, TFSlot.Secondary, 4 };
+        yield return new object[] { TFClass.Medic, TFSlot.Melee, 16 };
+        yield return new object[] { TFClass.Sniper, TFSlot.Primary, 10 };
+        yield return new object[] { TFClass.Sniper, TFSlot.Secondary, 7 };
+        yield return new object[] { TFClass.Sniper, TFSlot.Melee, 15 };
+        yield return new object[] { TFClass.Spy, TFSlot.Primary, 6 };
+        yield return new object[] { TFClass.Spy, TFSlot.Secondary, 5 };
+        yield return new object[] { TFClass.Spy, TFSlot.Melee, 11 };
+        yield return new object[] { TFClass.Spy, TFSlot.Sapper, 4 };
+    }
+
+    #region Core Functionality
     [Theory]
-    [MemberData(nameof(GetAllInvalidLoadoutCombos), MemberType = typeof(RandomizerTests))]
+    [MemberData(nameof(GetInvalidLoadoutCombos), MemberType = typeof(RandomizerTests))]
     public static void RandomizingForInvalidLoadoutComboThrowsArgumentException(TFClass targetClass, TFSlot targetSlot)
     {
         var randomizer = new Generator(DbFixture);
@@ -40,11 +199,12 @@ public class RandomizerTests
     }
 
     [Theory]
-    [MemberData(nameof(GetAllExistingLoadoutCombos), MemberType = typeof(RandomizerTests))]
-    public static void ReturnedWeaponIsOneOfTheExpectedOutcomes(LoadoutCombination loadoutCombo, int attempts)
+    [MemberData(nameof(GetAllLoadoutCombos), MemberType = typeof(RandomizerTests))]
+    public static void ReturnedWeaponIsOneOfTheExpectedOutcomes(LoadoutCombination loadoutCombo)
     {
-        var randomizer = new RandomLoadoutGenerator.Generator(DbFixture);
-        var expectedWeapons = from weapon in DbFixture.Weapons
+        const int attempts = 5;
+        var randomizer = new Generator();
+        var expectedWeapons = from weapon in new DatabaseContext().Weapons
                               where weapon.LoadoutCombos!.Contains(loadoutCombo)
                               select weapon;
 
@@ -82,7 +242,7 @@ public class RandomizerTests
     //POSSIBLY PROBLEMATIC
     //At normal session it fails, expected value: 197, actual: 194
     //When debugged all is fine, including enabling/disabling specified weapons
-    public static void DisablingEnablingWeaponsChangesTheirCount()
+    public static void EnablingDisablingWeaponsChangesTheirCount()
     {
         var generator = new Generator(DbFixture);
         generator.DisableWeapons(1, 2, 3);
@@ -112,15 +272,7 @@ public class RandomizerTests
     }
 
     [Theory]
-    [InlineData(TFClass.Scout, 36)]
-    [InlineData(TFClass.Soldier, 34)]
-    [InlineData(TFClass.Pyro, 36)]
-    [InlineData(TFClass.Demoman, 33)]
-    [InlineData(TFClass.Heavy, 32)]
-    [InlineData(TFClass.Engineer, 19)]
-    [InlineData(TFClass.Medic, 21)]
-    [InlineData(TFClass.Sniper, 29)]
-    [InlineData(TFClass.Spy, 24)]
+    [MemberData(nameof(GetEnabledWeaponsCountPerClass), MemberType = typeof(RandomizerTests))]
     public static void GetEnabledWeaponsReturnsCorrectlyForClasses(TFClass targetClass, int expectedAmount)
     {
         var generator = new Generator(DbFixture);
@@ -128,10 +280,7 @@ public class RandomizerTests
     }
 
     [Theory]
-    [InlineData(TFSlot.Primary, 61)]
-    [InlineData(TFSlot.Secondary, 67)]
-    [InlineData(TFSlot.Melee, 132)]
-    [InlineData(TFSlot.Sapper, 4)]
+    [MemberData(nameof(GetEnabledWeaponsCountPerSlot), MemberType = typeof(RandomizerTests))]
     public static void GetEnabledWeaponsReturnsCorrectlyForSlots(TFSlot targetSlot, int expectedAmount)
     {
         var generator = new Generator(DbFixture);
@@ -139,34 +288,7 @@ public class RandomizerTests
     }
 
     [Theory]
-    [InlineData(TFClass.Scout, TFSlot.Primary, 6)]
-    [InlineData(TFClass.Scout, TFSlot.Secondary, 10)]
-    [InlineData(TFClass.Scout, TFSlot.Melee, 20)]
-    [InlineData(TFClass.Soldier, TFSlot.Primary, 9)]
-    [InlineData(TFClass.Soldier, TFSlot.Secondary, 10)]
-    [InlineData(TFClass.Soldier, TFSlot.Melee, 15)]
-    [InlineData(TFClass.Pyro, TFSlot.Primary, 7)]
-    [InlineData(TFClass.Pyro, TFSlot.Secondary, 9)]
-    [InlineData(TFClass.Pyro, TFSlot.Melee, 20)]
-    [InlineData(TFClass.Demoman, TFSlot.Primary, 7)]
-    [InlineData(TFClass.Demoman, TFSlot.Secondary, 7)]
-    [InlineData(TFClass.Demoman, TFSlot.Melee, 19)]
-    [InlineData(TFClass.Heavy, TFSlot.Primary, 6)]
-    [InlineData(TFClass.Heavy, TFSlot.Secondary, 9)]
-    [InlineData(TFClass.Heavy, TFSlot.Melee, 17)]
-    [InlineData(TFClass.Engineer, TFSlot.Primary, 6)]
-    [InlineData(TFClass.Engineer, TFSlot.Secondary, 6)]
-    [InlineData(TFClass.Engineer, TFSlot.Melee, 7)]
-    [InlineData(TFClass.Medic, TFSlot.Primary, 4)]
-    [InlineData(TFClass.Medic, TFSlot.Secondary, 4)]
-    [InlineData(TFClass.Medic, TFSlot.Melee, 13)]
-    [InlineData(TFClass.Sniper, TFSlot.Primary, 10)]
-    [InlineData(TFClass.Sniper, TFSlot.Secondary, 7)]
-    [InlineData(TFClass.Sniper, TFSlot.Melee, 12)]
-    [InlineData(TFClass.Spy, TFSlot.Primary, 6)]
-    [InlineData(TFClass.Spy, TFSlot.Secondary, 5)]
-    [InlineData(TFClass.Spy, TFSlot.Melee, 9)]
-    [InlineData(TFClass.Spy, TFSlot.Sapper, 4)]
+    [MemberData(nameof(GetEnabledWeaponsCountPerClassAndSlot), MemberType = typeof(RandomizerTests))]
     public static void GetEnabledWeaponsReturnsCorrectlyForClassesAndSlots(TFClass targetClass, TFSlot targetSlot, int expectedAmount)
     {
         var generator = new Generator(DbFixture);
@@ -174,7 +296,7 @@ public class RandomizerTests
     }
 
     [Theory]
-    [MemberData(nameof(GetAllInvalidLoadoutCombos), MemberType = typeof(RandomizerTests))]    
+    [MemberData(nameof(GetInvalidLoadoutCombos), MemberType = typeof(RandomizerTests))]
     public static void GetEnabledWeaponsForInvalidLoadoutCombosThrowsArugmentException(TFClass targetClass, TFSlot targetSlot)
     {
         var generator = new Generator(DbFixture);
@@ -183,4 +305,42 @@ public class RandomizerTests
             generator.GetEnabledWeapons(targetClass, targetSlot);
         });
     }
+    #endregion
+
+    #region GetAllWeapons tests
+    [Theory]
+    [MemberData(nameof(GetAllWeaponsCountPerClass), MemberType = typeof(RandomizerTests))]
+    public static void GetAllWeaponsReturnsCorrectlyForClasses(TFClass targetClass, int expectedAmount)
+    {
+        var generator = new Generator();
+        Assert.Equal(expectedAmount, generator.GetAllWeapons(targetClass).Count());
+    }
+
+    [Theory]
+    [MemberData(nameof(GetAllWeaponsCountPerSlot), MemberType = typeof(RandomizerTests))]
+    public static void GetAllWeaponsReturnsCorrectlyForSlots(TFSlot targetSlot, int expectedAmount)
+    {
+        var generator = new Generator();
+        Assert.Equal(expectedAmount, generator.GetAllWeapons(targetSlot).Count());
+    }
+
+    [Theory]
+    [MemberData(nameof(GetAllWeaponsCountPerClassAndSlot), MemberType = typeof(RandomizerTests))]
+    public static void GetAllWeaponsReturnsCorrectlyForClassesAndSlots(TFClass targetClass, TFSlot targetSlot, int expectedAmount)
+    {
+        var generator = new Generator();
+        Assert.Equal(expectedAmount, generator.GetAllWeapons(targetClass, targetSlot).Count());
+    }
+
+    [Theory]
+    [MemberData(nameof(GetInvalidLoadoutCombos), MemberType = typeof(RandomizerTests))]
+    public static void GetAllWeaponsForInvalidLoadoutCombosThrowsArugmentException(TFClass targetClass, TFSlot targetSlot)
+    {
+        var generator = new Generator();
+        Assert.Throws<ArgumentException>(() =>
+        {
+            generator.GetAllWeapons(targetClass, targetSlot);
+        });
+    }
+    #endregion
 }
