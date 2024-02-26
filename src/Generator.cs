@@ -172,7 +172,7 @@ public sealed class Generator
         {
             result.AddRange(weaponList.Where(weapon => weapon.IsEnabled));
         }
-        return result;
+        return result.Distinct();
     }
 
     /// <summary>
@@ -191,7 +191,7 @@ public sealed class Generator
         {
             result.AddRange(weaponList.Where(weapon => weapon.IsEnabled));
         }
-        return result;
+        return result.Distinct();
     }
 
     /// <summary>
@@ -267,7 +267,7 @@ public sealed class Generator
         {
             result.AddRange(weaponList.Where(weapon => !weapon.IsEnabled));
         }
-        return result;
+        return result.Distinct();
     }
 
     /// <summary>
@@ -286,7 +286,7 @@ public sealed class Generator
         {
             result.AddRange(weaponList.Where(weapon => !weapon.IsEnabled));
         }
-        return result;
+        return result.Distinct();
     }
 
     /// <summary>
