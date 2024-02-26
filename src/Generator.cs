@@ -68,12 +68,14 @@ public sealed class Generator
 
     /// <summary>
     /// Randomizes a single weapon for the given class and the given slot.<br/>
-    /// <see cref="ArgumentException"/> will be thrown if the passed class/slot combo is not valid, such as <see cref="TFClass.Scout"/> with <see cref="TFSlot.Sapper"/>.
+    /// <see cref="ArgumentException"/> will be thrown if the passed class/slot combo is not valid, such as <see cref="TFClass.Scout"/> with <see cref="TFSlot.Sapper"/>.<br/>
+    /// <see cref="InvalidOperationException"/> will be thrown if all weapons for the given class and slot are disabled.
     /// </summary>
     /// <param name="targetClass">The <see cref="TFClass"/> for which the weapon will be randomized.</param>
     /// <param name="targetSlot">The <see cref="TFSlot"/> for which the weapon will be randomized.</param>
     /// <param name="treatReskinsAsOne">With this option enabled, all weapons which are considered reskins of each other will have only one of them put in the pool of possible weapons. In other words, enabling this option increases the chance of rolling for mechanically unique weapons.</param>
     /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
     public Weapon RandomizeWeapon(TFClass targetClass, TFSlot targetSlot, bool treatReskinsAsOne = false)
     {
         if (targetClass != TFClass.Spy && targetSlot == TFSlot.Sapper)
@@ -92,7 +94,9 @@ public sealed class Generator
             where weapon.LoadoutCombos!.Contains(targetLoadoutCombo) && weapon.IsEnabled
             select weapon;
 
-        //TODO: throw up on the carpet when all the weapons were disabled, do NOT tell mom
+        //No weapons is likely because they were all disabled
+        if (!validWeapons.Any())
+            throw new InvalidOperationException($"No weapons in the weapon pool. The likely reason is that all weapons for {targetClass} and {targetSlot} are disabled.");
 
         //With this option enabled, weapons are grouped by their ReskinGroup.
         //Each ReskinGroup adds only one of their weapons to the pool of possible weapons.
